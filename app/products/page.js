@@ -1,77 +1,76 @@
-
 import Link from "next/link";
+
 export default async function ProductsList({ searchParams }) {
-  const params = await searchParams;
+  try {
+    const resolvedSearchParams = await searchParams;
+    const category = resolvedSearchParams?.category;
+    const limit = resolvedSearchParams?.limit;
 
-  const category = params.category;
-  const limit = params.limit;
+    const response = await fetch("https://fakestoreapi.com/products");
+    
+    if (!response.ok) {
+      throw new Error("Failed to fetch products");
+    }
 
-  const response = await fetch(
-    "https://fakestoreapi.com/products"
-  );
+    const data = await response.json();
 
-  const data = await response.json();
+    let filteredProducts = data;
 
-  let filteredProducts = data;
+    if (category) {
+      filteredProducts = filteredProducts.filter(
+        (prod) => prod.category.toLowerCase() === category.toLowerCase()
+      );
+    }
 
-  if (category) {
-    filteredProducts = filteredProducts.filter(
-      (prod) => prod.category === category
-    );
-  }
+    if (limit) {
+      filteredProducts = filteredProducts.slice(0, Number(limit));
+    }
 
-  if (limit) {
-    filteredProducts = filteredProducts.slice(
-      0,Number(limit)
-    );
-  }
-
-  return (
-    <div className="products-container">
-      {filteredProducts.map((prod) => (
-        <div className="product-card" key={prod.id}>
-          <div className="product-image-container">
-            <img
-              src={prod.image}
-              alt={prod.title}
-              className="product-image"
-            />
-          </div>
-
-          <div className="product-content">
-            <h3 className="product-title">
-              {prod.title}
-            </h3>
-
-            <p className="product-description">
-              {prod.description}
-            </p>
-
-            <div className="product-rating">
-              ⭐ {prod.rating.rate} / 5
-              <span>({prod.rating.count} reviews)</span>
+    return (
+      <div className="products-container">
+        {filteredProducts.map((prod) => (
+          <div className="product-card" key={prod.id}>
+            <div className="product-image-container">
+              <img
+                src={prod.image}
+                alt={prod.title}
+                className="product-image"
+              />
             </div>
 
-            <div className="product-bottom">
-              <h2 className="product-price">
-                ${prod.price.toFixed(2)}
-              </h2>
+            <div className="product-content">
+              <h3 className="product-title">{prod.title}</h3>
 
-              <Link href={`/products/${prod.id}`}>
-                <button className="product-button">
-                  View Product
-                </button>
-              </Link>
+              <p className="product-description">{prod.description}</p>
+
+              <div className="product-rating">
+                ⭐ {prod.rating?.rate} / 5
+                <span>({prod.rating?.count} reviews)</span>
+              </div>
+
+              <div className="product-bottom">
+                <h2 className="product-price">
+                  ${prod.price?.toFixed(2)}
+                </h2>
+
+                <Link href={`/products/${prod.id}`}>
+                  <button className="product-button">
+                    View Product
+                  </button>
+                </Link>
+              </div>
             </div>
           </div>
-        </div>
-      ))}
-    </div>
-  );
+        ))}
+      </div>
+    );
+  } catch (error) {
+    console.error("Error loading products:", error);
+    return (
+      <div style={{ padding: "20px", textAlign: "center" }}>
+        <h2>Failed to load products.</h2>
+        <p>Please try again later.</p>
+      </div>
+    );
+  }
 }
-
-
-
-
-
-// http://localhost:3000/products?category=electronics&limit=3
