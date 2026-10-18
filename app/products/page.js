@@ -67,9 +67,9 @@ export default async function ProductsList({ searchParams }) {
   } catch (error) {
     console.error("Error loading products:", error);
     return (
-      <div style={{ padding: "20px", textAlign: "center" }}>
+      <div style={{ padding: "20px", textAlign: "center", color: "red" }}>
         <h2>Failed to load products.</h2>
-        <p>Please try again later.</p>
+        <p><strong>Error Details:</strong> {error.message}</p>
       </div>
     );
   }
