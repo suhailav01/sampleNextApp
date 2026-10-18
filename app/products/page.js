@@ -1,5 +1,5 @@
 import Link from "next/link";
-
+export const dynamic = 'force-dynamic';
 export default async function ProductsList({ searchParams }) {
   try {
     const resolvedSearchParams = await searchParams;
