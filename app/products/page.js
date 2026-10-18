@@ -1,13 +1,13 @@
 import Link from "next/link";
-export const dynamic = 'force-dynamic';
 export default async function ProductsList({ searchParams }) {
   try {
     const resolvedSearchParams = await searchParams;
     const category = resolvedSearchParams?.category;
     const limit = resolvedSearchParams?.limit;
 
-    const response = await fetch("https://fakestoreapi.com/products");
-    
+    const response = await fetch("https://fakestoreapi.com/products", {
+      cache: "no-store"
+    });
     if (!response.ok) {
       throw new Error("Failed to fetch products");
     }
