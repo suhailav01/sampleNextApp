@@ -7,10 +7,8 @@ export default async function ProductsList({ searchParams }) {
     const category = resolvedSearchParams?.category;
     const limit = resolvedSearchParams?.limit;
 
-    // Fetch products using the Service class
     const products = await ProductService.getProducts();
 
-    // Safety check if products data is valid
     if (!products || !Array.isArray(products)) {
       throw new Error("Invalid products data received");
     }
