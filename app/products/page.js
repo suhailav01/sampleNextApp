@@ -1,24 +1,25 @@
 import Link from "next/link";
+import ProductService from "../services/productServices";
+
 export default async function ProductsList({ searchParams }) {
   try {
     const resolvedSearchParams = await searchParams;
     const category = resolvedSearchParams?.category;
     const limit = resolvedSearchParams?.limit;
 
-    const response = await fetch("https://fakestoreapi.com/products", {
-      cache: "no-store"
-    });
-    if (!response.ok) {
-      throw new Error("Failed to fetch products");
+    // Fetch products using the Service class
+    const products = await ProductService.getProducts();
+
+    // Safety check if products data is valid
+    if (!products || !Array.isArray(products)) {
+      throw new Error("Invalid products data received");
     }
 
-    const data = await response.json();
-
-    let filteredProducts = data;
+    let filteredProducts = products;
 
     if (category) {
       filteredProducts = filteredProducts.filter(
-        (prod) => prod.category.toLowerCase() === category.toLowerCase()
+        (prod) => prod.category?.toLowerCase() === category.toLowerCase()
       );
     }
 

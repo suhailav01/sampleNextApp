@@ -1,18 +1,22 @@
-
-export const instant = false
-import { headers } from 'next/headers'
+"use client"
+import { useEffect, useState } from 'react'
 import ProductService from '../services/productServices'
 
 
-export default async function ProductList() {
-  const headersList = await headers()
-  const referer  = headersList.get('referer')
-  console.log("headers data",referer);
-  const products = await ProductService.getProducts()
-
+export default function ProductList() {
+  const [product, setProducts] = useState([])
+  const fetchProducts = async () => {
+    const products = await ProductService.getProducts()
+    setProducts(products)
+  }
+  useEffect(() => {
+    fetchProducts()
+  }, [])
+  console.log("this is fetched data",product);
+  
   return (
     <div>
-      {products.map((p) => (
+      {product.map((p) => (
         <div key={p.id}>
           <h1>{p.title}</h1>
         </div>
